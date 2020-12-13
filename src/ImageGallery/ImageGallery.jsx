@@ -27,7 +27,6 @@ class ImageGallery extends Component {
     API(this.props.searchQuery, this.state.currentPage)
       .then(query => {
         const images = query.data.hits;
-        console.log(images);
         if (!images.length) {
           this.setState({ query, status: Status.REJECTED });
         } else {
@@ -36,14 +35,16 @@ class ImageGallery extends Component {
             status: Status.RESOLVED,
             currentPage: prevState.currentPage + 1,
           }));
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          });
           window.addEventListener('click', this.onGalleryItemClick);
         }
       })
       .catch(error => this.setState({ error, status: Status.REJECTED }));
   };
   onGalleryItemClick = event => {
-    console.log('sdfsdfsdfsdf');
-    // event.preventDefault();
     if (event.target.nodeName !== 'IMG') {
       return;
     }
@@ -58,13 +59,15 @@ class ImageGallery extends Component {
   componentDidUpdate = (prevProps, prevState) => {
     const prevQuery = prevProps.searchQuery;
     const nextQuery = this.props.searchQuery;
-
     if (prevQuery !== nextQuery) {
       this.setState({
         status: Status.PENDING,
+        query: [],
         currentPage: this.props.currentPage,
       });
-      this.fetchImages();
+      setTimeout(() => {
+        this.fetchImages();
+      }, 3000);
     }
   };
   componentWillUnmount() {
@@ -80,7 +83,7 @@ class ImageGallery extends Component {
 
     if (status === 'pending') {
       return (
-        <div>
+        <div className={styles.Loader}>
           <Loader searchQuery={searchQuery} />
         </div>
       );

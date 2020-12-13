@@ -1,4 +1,4 @@
-.ImageGallery {
+.ImageGallery {position: relative;;
   display: grid;
   max-width: calc(100vw - 48px);
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -14,3 +14,6 @@
 max-width: calc(100vw - 48px);
 max-height: calc(100vh - 24px);
 }
+.Loader{position: absolute;
+top: 20%;
+left: 30%;}
