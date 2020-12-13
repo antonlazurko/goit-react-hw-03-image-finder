@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import styles from './ImageGalleryItem.module.css';
 const ImageGalleryItem = ({ query }) => {
   const imageData = query;
@@ -13,3 +15,6 @@ const ImageGalleryItem = ({ query }) => {
   ));
 };
 export default ImageGalleryItem;
+ImageGalleryItem.propTypes = {
+  query: PropTypes.arrayOf(PropTypes.object),
+};

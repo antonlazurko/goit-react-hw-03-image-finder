@@ -1,4 +1,6 @@
 import axios from 'axios';
+import PropTypes from 'prop-types';
+
 //18968535-a98ecca7bd1b0403c78b07ef3
 function fetchImage(query, currenPage) {
   return axios
@@ -8,3 +10,7 @@ function fetchImage(query, currenPage) {
     .then(response => response);
 }
 export default fetchImage;
+fetchImage.propTypes = {
+  query: PropTypes.string,
+  searchQuery: PropTypes.string,
+};

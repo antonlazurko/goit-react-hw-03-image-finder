@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import styles from './ImageError.module.css';
 import sadImage from './jW.gif';
 export default function ImageError({ error, searchQuery }) {
@@ -12,3 +14,7 @@ export default function ImageError({ error, searchQuery }) {
     </div>
   );
 }
+ImageError.propTypes = {
+  error: PropTypes.object,
+  searchQuery: PropTypes.string,
+};

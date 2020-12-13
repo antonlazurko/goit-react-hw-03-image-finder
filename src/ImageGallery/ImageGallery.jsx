@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import styles from './ImageGallery.module.css';
 import API from '../services/Service-api';
@@ -115,3 +116,7 @@ class ImageGallery extends Component {
   }
 }
 export default ImageGallery;
+ImageGallery.propTypes = {
+  currentPage: PropTypes.number,
+  searchQuery: PropTypes.string,
+};
