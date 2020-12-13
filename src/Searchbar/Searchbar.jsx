@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import styles from './Searchbar.module.css';
 class Searchbar extends Component {
-  state = { searchQuery: '' };
+  state = { searchQuery: '', currentPage: 1 };
 
   onQueryChange = e => {
     this.setState({ searchQuery: e.currentTarget.value });
@@ -11,11 +12,14 @@ class Searchbar extends Component {
   onSubmit = e => {
     e.preventDefault();
     if (this.state.searchQuery.trim() === '') {
-      toast.error('Type something to find.');
+      toast('Type something to find.');
       return;
     }
-    this.props.onSubmit(this.state.searchQuery);
-    this.setState({ searchQuery: '' });
+    this.props.onSubmit(
+      this.state.searchQuery.toLowerCase(),
+      this.state.currentPage,
+    );
+    this.setState({ searchQuery: '', currentPage: 1 });
   };
   render() {
     return (

@@ -1,13 +1,12 @@
 import React from 'react';
 import styles from './ImageGalleryItem.module.css';
 const ImageGalleryItem = ({ query }) => {
-  console.log(query.data.hits);
-  const imageData = query.data.hits;
+  const imageData = query;
   return imageData.map(image => (
     <li key={image.id} className={styles.ImageGalleryItem}>
       <img
         src={image.webformatURL}
-        alt={image.type}
+        alt={image.largeImageURL}
         className={styles.ImageGalleryItemImage}
       />
     </li>

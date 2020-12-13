@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+
 import styles from './ImageGallery.module.css';
 import API from '../services/Service-api';
 import ImageGalleryItem from './ImageGalleryItem';
+import Loader from '../Loader';
+import ImageError from '../ImageError';
+import Modal from '../Modal';
 
 const Status = {
   IDLE: 'idle',
@@ -11,25 +15,62 @@ const Status = {
 };
 class ImageGallery extends Component {
   state = {
-    query: null,
+    query: [],
     error: null,
     status: Status.IDLE,
+    currentPage: 1,
+    showModal: false,
+    largeImageURL: '',
+  };
+
+  fetchImages = () => {
+    API(this.props.searchQuery, this.state.currentPage)
+      .then(query => {
+        const images = query.data.hits;
+        console.log(images);
+        if (!images.length) {
+          this.setState({ query, status: Status.REJECTED });
+        } else {
+          this.setState(prevState => ({
+            query: [...prevState.query, ...images],
+            status: Status.RESOLVED,
+            currentPage: prevState.currentPage + 1,
+          }));
+          window.addEventListener('click', this.onGalleryItemClick);
+        }
+      })
+      .catch(error => this.setState({ error, status: Status.REJECTED }));
+  };
+  onGalleryItemClick = event => {
+    console.log('sdfsdfsdfsdf');
+    // event.preventDefault();
+    if (event.target.nodeName !== 'IMG') {
+      return;
+    }
+    this.setState({ largeImageURL: event.target.alt });
+    this.toggleModal();
+  };
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
   };
   componentDidUpdate = (prevProps, prevState) => {
     const prevQuery = prevProps.searchQuery;
     const nextQuery = this.props.searchQuery;
 
     if (prevQuery !== nextQuery) {
-      this.setState({ status: Status.PENDING });
-
-      API(this.props.searchQuery)
-        .then(query => this.setState({ query, status: Status.RESOLVED }))
-        .catch(error => this.setState({ error, status: Status.REJECTED }))
-        .then(() => {});
+      this.setState({
+        status: Status.PENDING,
+        currentPage: this.props.currentPage,
+      });
+      this.fetchImages();
     }
   };
+  componentWillUnmount() {
+    window.removeEventListener('click', this.onGalleryItemClick);
+  }
   render() {
-    console.log(this.state);
     const { query, error, status } = this.state;
     const { searchQuery } = this.props;
 
@@ -38,18 +79,33 @@ class ImageGallery extends Component {
     }
 
     if (status === 'pending') {
-      return <div>Загружается {searchQuery}</div>;
+      return (
+        <div>
+          <Loader searchQuery={searchQuery} />
+        </div>
+      );
     }
 
     if (status === 'rejected') {
-      return <div>ОШИБКА {error.message}</div>;
-      // <QueryErrorView message={error.message} />;
+      return <ImageError error={error} searchQuery={searchQuery} />;
     }
 
     if (status === 'resolved') {
       return (
         <ul className={styles.ImageGallery}>
           <ImageGalleryItem query={query} />
+          {this.state.showModal && (
+            <Modal onClose={this.toggleModal}>
+              <img
+                src={this.state.largeImageURL}
+                alt=""
+                className={styles.image}
+              />
+            </Modal>
+          )}
+          <button type="button" onClick={this.fetchImages}>
+            Загрузить еще
+          </button>
         </ul>
       );
     }
